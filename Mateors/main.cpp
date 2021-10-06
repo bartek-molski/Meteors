@@ -6,16 +6,11 @@
 #include <time.h>
 #include <random>
 #include <string>
-#include <array>
+#include <list>
+#include "Rocket.h"
 
 
-bool kinematicBodyColision(KinematicBody k1, KinematicBody k2) {
-    float dist = Vector2Distance(k1.position, k2.position);
-    if (dist < k1.radius + k2.radius) {
-        return true;
-    }
-    return false;
-}
+
 int main(void)
 {
 
@@ -32,7 +27,8 @@ int main(void)
     Texture2D meteor = LoadTexture("assets/meteor01.png"); // Load texture from file into GPU memory (VRAM)
     Texture2D spaceship = LoadTexture("assets/spaceship.png"); // Load texture from file into GPU memory (VRAM)
     Texture2D stars = LoadTexture("assets/stars.png"); // Load texture from file into GPU memory (VRAM)
-    //Meteor k1 = Meteor("meteor", meteor, 50, V/ector2{ 100, 100 });
+    Rocket::tex = LoadTexture("assets/rocket.png");
+    
     Player player = Player("player", spaceship, 50, Vector2{ 200, 200 });
 
     //KinematicBody::registerPhysicsBody(&k1);
@@ -40,12 +36,18 @@ int main(void)
 
 
     float size = 410;
-
-    std::array<Meteor, 20> meteors;
-    for (int a = 0; a < 20; a++) {
-        float alfa = (a/20.0)*2.0*PI;
-        meteors[a] = (Meteor("meteor" + std::to_string(a), meteor, 50, Vector2{cos(alfa)*size, sin(alfa)*size}+center));
-        KinematicBody::registerPhysicsBody(&(meteors[a]));
+    int count = 6;
+    std::list<Meteor >  meteors;
+    for (int a = 0; a < count; a++) {
+        float alfa = (a/(float)count)*2.0*PI;
+        meteors.push_back(Meteor("meteor" + std::to_string(a), meteor, 50, Vector2{cos(alfa)*size, sin(alfa)*size}+center));
+        
+    }
+    for (auto& m : meteors) {
+        KinematicBody::registerPhysicsBody(&(m));
+    }
+    for (int a = 1; a <= 3; a++) {
+        KinematicBody::deletePhysicsBody(a);
     }
 
 
@@ -59,13 +61,16 @@ int main(void)
         // Update
         //----------------------------------------------------------------------------------
         // TODO: Update your variables here
-        //player.update(GetFrameTime(), screenWidth, screenHeight);
-        KinematicBody::updateAll(GetFrameTime(), screenWidth, screenHeight);
-        //k1.update(GetFrameTime());
-        KinematicBody::resolveCollisions();
-        /*for (auto& m : meteors) {
-            m.update(GetFrameTime());
-        }*/
+        
+        if (player.flag_for_deletion == false) {
+            KinematicBody::updateAll(GetFrameTime(), screenWidth, screenHeight);
+
+            KinematicBody::resolveCollisions();
+            KinematicBody::deleteFlagedPhysicsBodies();
+        }
+
+        
+        
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -74,13 +79,11 @@ int main(void)
 
         ClearBackground(RAYWHITE);
         DrawTextureV(stars, Vector2Zero(), WHITE);
-        for (auto& m : meteors) {
-            m.draw(screenWidth, screenHeight);
-        }
-        //k1.draw();
-        player.draw_debug();
-        player.draw(screenWidth, screenHeight);
         
+        KinematicBody::drawAll(screenWidth, screenHeight);
+        if (player.flag_for_deletion == true) {
+            DrawText("GAME OVER!", 120, 100, 160, RED);
+        }
        
 
         

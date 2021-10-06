@@ -14,6 +14,7 @@ Player::Player(std::string name, Texture2D sprite, float radius, Vector2 positio
 	this->velocity = Vector2Zero();
 	this->direction = Vector2{ 1, 0 };
 	this->name = name;
+	this->flag_for_deletion = false;
 }
 
 void Player::update(float delta, int screenWidth, int screenHeight)
@@ -24,7 +25,7 @@ void Player::update(float delta, int screenWidth, int screenHeight)
 	this->direction = Vector2Rotate(this->direction, current_rotation);
 	float speed = 0;
 
-
+	if (IsKeyPressed(KEY_SPACE)) this->shoot();
 	if (IsKeyDown(KEY_UP)) speed += 100.0f;
 	else if (IsKeyDown(KEY_DOWN)) speed -= 100.0f;
 	/*else {
@@ -79,4 +80,12 @@ void Player::draw(int screenWidth, int screenHeight)
 		Rectangle{ (float)this->position.x, (float)this->position.y - screenHeight, (float)(this->sprite.width), (float)(this->sprite.height) },
 		Vector2{ (float)(this->sprite.width / 2), (float)(this->sprite.height / 2) }, this->rotation, WHITE);
 		
+}
+
+void Player::shoot()
+{
+	float rot = (this->rotation - 90) * ((float)PI / 180);
+	this->rockets.push_back(Rocket("rocket", 5, this->position + Vector2{(this->radius+20)*cos(rot), (this->radius + 20) * sin(rot) }));
+	this->rockets.back().direction = Vector2{ cos(rot), sin(rot) };
+	KinematicBody::registerPhysicsBody(&(this->rockets.back()));
 }

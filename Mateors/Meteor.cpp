@@ -12,6 +12,7 @@ Meteor::Meteor(std::string name, Texture2D sprite, float radius, Vector2 positio
 	this->speed = (rand() % 200)+10;
 	this->current_rotation = (rand() % 30)/5.0;
 	this->name = name;
+	this->flag_for_deletion = false;
 	
 }
 

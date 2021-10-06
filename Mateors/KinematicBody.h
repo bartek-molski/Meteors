@@ -11,6 +11,7 @@ public:
 	float scale;
 	Texture2D sprite;
 	std::string name;
+	bool flag_for_deletion;
 
 	KinematicBody(){}
 	KinematicBody(std::string name, Texture2D sprite, float radius, Vector2 position, float rotation = 0, float scale = 1);
@@ -18,12 +19,16 @@ public:
 	virtual void update(float delta, int screenWidth, int screenHeight) {};
 	virtual void draw(int screenWidth, int screenHeight);
 	void move(Vector2 pos);
+	bool is_colliding(KinematicBody* body);
+
 
 	static std::vector<KinematicBody*> physicsBodies;
 	static void resolveCollisions();
 	static void registerPhysicsBody(KinematicBody* body);
 	static void deletePhysicsBody(int id);
 	static void updateAll(float delta, int screenWidth, int screenHeight);
+	static void drawAll( int screenWidth, int screenHeight);
+	static void deleteFlagedPhysicsBodies();
 };
 
 
