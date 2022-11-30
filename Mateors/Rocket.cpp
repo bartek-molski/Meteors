@@ -17,6 +17,7 @@ Rocket::Rocket(std::string name, float radius, Vector2 position, float rotation,
 	this->current_rotation = 0;
 	this->name = name;
 	this->flag_for_deletion = false;
+	this->time = 1.5;
 }
 
 /*Rocket::Rocket(std::string name, Texture2D sprite, float radius, Vector2 position, float rotation, float scale)
@@ -41,4 +42,6 @@ void Rocket::update(float delta, int screenWidth, int screenHeight)
 	this->velocity = this->direction * speed;
 	this->move(this->velocity * delta);
 	this->rotation = atan2(this->direction.y, this->direction.x) * (180.0 / PI) + 90;
+	this->time = this->time - delta;
+	
 }

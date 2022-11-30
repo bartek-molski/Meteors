@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "raymathext.h"
-#include <vector>
+#include <list>
 class KinematicBody
 { 
 public:
@@ -22,10 +22,10 @@ public:
 	bool is_colliding(KinematicBody* body);
 
 
-	static std::vector<KinematicBody*> physicsBodies;
+	static std::list<KinematicBody*> physicsBodies;
 	static void resolveCollisions();
 	static void registerPhysicsBody(KinematicBody* body);
-	static void deletePhysicsBody(int id);
+	static void deletePhysicsBody(KinematicBody* body);
 	static void updateAll(float delta, int screenWidth, int screenHeight);
 	static void drawAll( int screenWidth, int screenHeight);
 	static void deleteFlagedPhysicsBodies();

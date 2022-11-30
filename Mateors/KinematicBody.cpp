@@ -1,7 +1,7 @@
 #include "KinematicBody.h"
 
 // static Definition
-std::vector<KinematicBody*> KinematicBody::physicsBodies;
+std::list<KinematicBody*> KinematicBody::physicsBodies;
 
 
 KinematicBody::KinematicBody(std::string name, Texture2D sprite, float radius, Vector2 position, float rotation, float scale)
@@ -48,13 +48,6 @@ bool KinematicBody::is_colliding(KinematicBody* body)
 	return false;
 }
 
-/*bool kinematicBodyColision(KinematicBody k1, KinematicBody k2) {
-	float dist = Vector2Distance(k1.position, k2.position);
-	if (dist < k1.radius + k2.radius) {
-		return true;
-	}
-	return false;
-}*/
 
 void KinematicBody::resolveCollisions()
 {
@@ -63,7 +56,8 @@ void KinematicBody::resolveCollisions()
 		for (auto& body2 : KinematicBody::physicsBodies)
 		{
 			
-			if (body != body2  &&  body->is_colliding(body2)) {
+			if (body != body2  &&  body->is_colliding(body2) && 
+				(body->name.compare(body2->name) != 0)) {
 				body->flag_for_deletion = true;
 				std::cout << body->name << " is_colliding with "<< body2->name;
 			}
@@ -77,34 +71,33 @@ void KinematicBody::registerPhysicsBody(KinematicBody* body)
 	KinematicBody::physicsBodies.push_back(body);
 }
 
-void KinematicBody::deletePhysicsBody(int id)
+void KinematicBody::deletePhysicsBody(KinematicBody* body)
 {
-	KinematicBody::physicsBodies.erase(KinematicBody::physicsBodies.begin()+id);
+	KinematicBody::physicsBodies.remove(body);
 }
 
 void KinematicBody::updateAll(float delta, int screenWidth, int screenHeight)
 {
 	for (auto& body : KinematicBody::physicsBodies)
 	{
-		body->update(delta, screenWidth, screenHeight);
+		if (body != nullptr) {
+			body->update(delta, screenWidth, screenHeight);
+		}
+		
 	}
 }
 
 void KinematicBody::drawAll(int screenWidth, int screenHeight)
 {
 	for (auto& body : KinematicBody::physicsBodies) {
-		body->draw( screenWidth, screenHeight);
+		if (body != nullptr) {
+			body->draw(screenWidth, screenHeight);
+		}
+		
 	}
 }
 
 void KinematicBody::deleteFlagedPhysicsBodies()
 {
-	int id = 0;
-	for (auto& body : KinematicBody::physicsBodies) {
-
-		if (body->flag_for_deletion) {
-			KinematicBody::deletePhysicsBody(id);
-		}
-		id++;
-	}
+	KinematicBody::physicsBodies.remove_if([](KinematicBody* body) {return body->flag_for_deletion; });
 }

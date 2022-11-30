@@ -7,7 +7,7 @@ class Player :
     public KinematicBody
 {
 public:
-
+    float shoot_timer;
     Vector2 velocity;
     Vector2 direction;
     std::list<Rocket> rockets;
@@ -15,6 +15,7 @@ public:
     void update(float delta, int screenWidth, int screenHeight);
     void draw(int screenWidth, int screenHeight);
     void shoot();
+    
 };
 
 

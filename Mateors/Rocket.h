@@ -6,6 +6,7 @@ class Rocket :
 public:
     float current_rotation;
     float speed;
+    float time;
     Vector2 velocity;
     Vector2 direction;
     Rocket(std::string name, float radius, Vector2 position, float rotation = 0, float scale = 1);
